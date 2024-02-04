@@ -37,6 +37,12 @@ cargo cf web open-browser
 
 <!-- After opening the client it will attempt connect to a locally running `ambient server` on `127.0.0.1:9000` (the default) -->
 
+Run a local ambient server like:
+
+```
+ambient serve --public-host 127.0.0.1 --cert ~/code/Ambient/localhost.crt.pem --key ~/code/Ambient/localhost.key.pem ./
+```
+
 ## Known Issues
 
 - Bad CPU type in executable:
