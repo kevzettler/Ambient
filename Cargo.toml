@@ -180,15 +180,15 @@ time = { version = "0.3", features = ["local-offset"] }
 quinn = { version = "0.10" }
 rustls-native-certs = "0.6.3"
 webpki-roots = "0.23.1"
-mikktspace = { git = "https://github.com/gltf-rs/mikktspace" }
+mikktspace = { git = "https://github.com/gltf-rs/mikktspace", rev = "6275cc4f15cff8be29819fb34ae8be3b9129dae1" }
 rustls = { version = "0.21.7", features = ["dangerous_configuration", "quic"] }
 
 rustls-pemfile = "1.0"
 
 # See: https://github.com/hyperium/h3/pull/183
-h3 = { git = "https://github.com/hyperium/h3" }
-h3-webtransport = { git = "https://github.com/hyperium/h3" }
-h3-quinn = { git = "https://github.com/hyperium/h3" }
+h3 = { git = "https://github.com/hyperium/h3", rev="a57ed224ac5d17a635eb71eb6f83c1196f581a51" }
+h3-webtransport = { git = "https://github.com/hyperium/h3", rev="a57ed224ac5d17a635eb71eb6f83c1196f581a51" }
+h3-quinn = { git = "https://github.com/hyperium/h3", rev="a57ed224ac5d17a635eb71eb6f83c1196f581a51" }
 http = { version = "0.2.9" }
 
 #

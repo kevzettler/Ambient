@@ -3213,7 +3213,7 @@ dependencies = [
 [[package]]
 name = "h3"
 version = "0.0.2"
-source = "git+https://github.com/hyperium/h3#a57ed224ac5d17a635eb71eb6f83c1196f581a51"
+source = "git+https://github.com/hyperium/h3?rev=a57ed224ac5d17a635eb71eb6f83c1196f581a51#a57ed224ac5d17a635eb71eb6f83c1196f581a51"
 dependencies = [
  "bytes",
  "fastrand 1.9.0",
@@ -3227,7 +3227,7 @@ dependencies = [
 [[package]]
 name = "h3-quinn"
 version = "0.0.3"
-source = "git+https://github.com/hyperium/h3#a57ed224ac5d17a635eb71eb6f83c1196f581a51"
+source = "git+https://github.com/hyperium/h3?rev=a57ed224ac5d17a635eb71eb6f83c1196f581a51#a57ed224ac5d17a635eb71eb6f83c1196f581a51"
 dependencies = [
  "bytes",
  "futures",
@@ -3241,7 +3241,7 @@ dependencies = [
 [[package]]
 name = "h3-webtransport"
 version = "0.1.0"
-source = "git+https://github.com/hyperium/h3#a57ed224ac5d17a635eb71eb6f83c1196f581a51"
+source = "git+https://github.com/hyperium/h3?rev=a57ed224ac5d17a635eb71eb6f83c1196f581a51#a57ed224ac5d17a635eb71eb6f83c1196f581a51"
 dependencies = [
  "bytes",
  "futures-util",
@@ -3946,7 +3946,7 @@ dependencies = [
 [[package]]
 name = "mikktspace"
 version = "0.3.0"
-source = "git+https://github.com/gltf-rs/mikktspace#6275cc4f15cff8be29819fb34ae8be3b9129dae1"
+source = "git+https://github.com/gltf-rs/mikktspace?rev=6275cc4f15cff8be29819fb34ae8be3b9129dae1#6275cc4f15cff8be29819fb34ae8be3b9129dae1"
 dependencies = [
  "nalgebra",
 ]
