@@ -172,13 +172,13 @@ web-sys = { version = "0.3.64", features = [
     "Window",
 ] }
 js-sys = { version = "0.3.64" }
-wasm-bindgen = "0.2"
+wasm-bindgen = "0.2.88"
 wasm-bindgen-futures = "0.4"
 
 #
 # Networking
 #
-time = { version = "0.3", features = ["local-offset"] }
+time = { version = ">=0.3.35", features = ["local-offset"] }
 quinn = { version = "0.10" }
 rustls-native-certs = "0.6.3"
 webpki-roots = "0.23.1"

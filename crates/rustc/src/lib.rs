@@ -1,4 +1,5 @@
 use std::{
+    env,
     ffi::OsStr,
     fmt::Display,
     path::{Path, PathBuf},
@@ -11,6 +12,12 @@ use is_terminal::IsTerminal;
 use itertools::Itertools;
 
 const MINIMUM_RUST_VERSION: Version = Version((1, 65, 0));
+
+/// Toolchain used for building guest (WASM) packages. Respects RUSTUP_TOOLCHAIN env so
+/// users can e.g. use 1.83.0 when stable does not have wasm32-wasi.
+fn guest_toolchain() -> String {
+    env::var("RUSTUP_TOOLCHAIN").unwrap_or_else(|_| "stable".to_string())
+}
 
 #[derive(Clone)]
 pub struct Rust(Installation);
@@ -29,12 +36,13 @@ impl Rust {
             anyhow::bail!("`rustc` is not installed. Please install it with `rustup` for the best experience.");
         }
 
+        let toolchain = guest_toolchain();
         if !installation
-            .get_installed_targets()?
+            .get_installed_targets(&toolchain)?
             .iter()
             .any(|s| s == "wasm32-wasi")
         {
-            anyhow::bail!("Your `rustup` installation does not have `wasm32-wasi` installed for the stable toolchain. Please install it with `rustup target add --toolchain stable wasm32-wasi`.")
+            anyhow::bail!("Your `rustup` installation does not have `wasm32-wasi` installed for the {} toolchain. Please install it with `rustup target add --toolchain {} wasm32-wasi`.", toolchain, toolchain)
         }
 
         Ok(Self(installation))
@@ -59,6 +67,7 @@ impl Rust {
         // usable in other contexts, but hey, fix it when it's a problem, not before.
         let is_terminal = std::io::stdout().is_terminal();
         let result = self.0.run(
+            Some(guest_toolchain().as_str()),
             "cargo",
             [
                 "build",
@@ -98,9 +107,9 @@ impl Installation {
         self.get_version_for("get rustc version", "rustc")
     }
 
-    fn get_installed_targets(&self) -> anyhow::Result<Vec<String>> {
+    fn get_installed_targets(&self, toolchain: &str) -> anyhow::Result<Vec<String>> {
         Ok(
-            handle_command_failure("get targets", self.run("rustup", ["target", "list"], None))?
+            handle_command_failure("get targets", self.run(None, "rustup", ["target", "list", "--toolchain", toolchain], None))?
                 .lines()
                 .filter_map(|l| Some(l.strip_suffix("(installed)")?.trim().to_string()))
                 .collect(),
@@ -109,7 +118,7 @@ impl Installation {
 
     fn get_version_for(&self, task: &str, cmd: &str) -> anyhow::Result<Version> {
         Ok(Version(
-            handle_command_failure(task, self.run(cmd, ["--version"], None))?
+            handle_command_failure(task, self.run(None, cmd, ["--version"], None))?
                 .split_whitespace()
                 .nth(1)
                 .context("Failed to extract version component (1)")?
@@ -125,6 +134,7 @@ impl Installation {
 
     fn run(
         &self,
+        toolchain: Option<&str>,
         cmd: &str,
         args: impl IntoIterator<Item = impl AsRef<OsStr>>,
         working_directory: Option<&Path>,
@@ -134,9 +144,10 @@ impl Installation {
         let mut command = Command::new(exe_path);
         silence_output_window(&mut command);
 
+        let toolchain_val = toolchain.unwrap_or("stable");
         command
             .envs([
-                ("RUSTUP_TOOLCHAIN", "stable".to_string()),
+                ("RUSTUP_TOOLCHAIN", toolchain_val.to_string()),
                 ("CARGO_INCREMENTAL", "1".to_string()),
             ])
             .args(args);

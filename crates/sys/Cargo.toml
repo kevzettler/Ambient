@@ -37,8 +37,8 @@ web-sys = { version = "0.3", features = [
     "Clipboard",
 ] }
 js-sys = "0.3"
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
 gloo-timers = { version = "0.3" }
 
 [target.'cfg(not(target_os = "unknown"))'.dependencies]
