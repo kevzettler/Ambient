@@ -68,6 +68,8 @@ ambient_proxy = { version = "0.3.3", git = "https://github.com/AmbientRun/Ambien
 web-sys = { workspace = true, features = [
     "WebSocket",
     "WebTransport",
+    "WebTransportOptions",
+    "WebTransportHash",
     "WritableStream",
     "ReadableStream",
     "ReadableStreamDefaultReader",

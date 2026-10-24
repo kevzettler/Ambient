@@ -1,0 +1,26 @@
+[package]
+name = "wasm-bridge-macros"
+description = "Helper crate to define proc macros for wasm-bridge"
+version = "0.2.2"
+edition = "2021"
+repository = "https://github.com/kajacx/wasm-bridge"
+license = "MIT"
+keywords = ["WASM", "wasmtime", "web"]
+categories = ["wasm", "web-programming"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+anyhow = "1.0"
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "1.0", features = ["extra-traits"] }
+wasmtime-component-util = { version = "12.0.1" }
+wasmtime-wit-bindgen = { version = "12.0.1" }
+wit-parser = { version = "0.9.2" }
+regex = "1.8"
+heck = "0.4"
+
+[features]
+async = []

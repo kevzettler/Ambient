@@ -39,6 +39,9 @@ pub struct Settings {
     user_id: Option<String>,
     #[serde(default)]
     debugger: bool,
+    /// Optional SHA-256 digest of the WebTransport server's leaf certificate.
+    #[serde(default)]
+    server_certificate_hash: Option<Vec<u8>>,
 }
 
 fn default_filter() -> String {

@@ -3,6 +3,10 @@ members = ["client", "dioxus_example"]
 default-members = ["client"]
 resolver = "2"
 
+[patch."https://github.com/AmbientRun/wasm-bridge"]
+wasm-bridge-js = { path = "vendor/wasm-bridge-js" }
+wasm-bridge-macros = { path = "vendor/wasm-bridge-macros" }
+
 [workspace.package]
 version = "0.3.2-dev"
 rust-version = "1.70.0"

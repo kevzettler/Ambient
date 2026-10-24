@@ -42,8 +42,30 @@ impl Drop for Connection {
 impl Connection {
     /// Open a connection to `url`
     pub async fn connect(url: &str) -> anyhow::Result<Self> {
-        let transport = WebTransport::new(url)
-            .map_err(|e| anyhow!("Failed to connect to game server. {e:?}"))?;
+        Self::connect_with_certificate_hash(url, None).await
+    }
+
+    /// Authenticate an ephemeral server with an explicit SHA-256 certificate pin.
+    /// Without a pin, Chrome's normal certificate validation remains in use.
+    pub async fn connect_with_certificate_hash(
+        url: &str,
+        certificate_hash: Option<&[u8]>,
+    ) -> anyhow::Result<Self> {
+        let transport = if let Some(bytes) = certificate_hash {
+            anyhow::ensure!(
+                bytes.len() == 32,
+                "Expected a 32-byte SHA-256 certificate hash"
+            );
+            let mut hash = web_sys::WebTransportHash::new();
+            hash.algorithm("sha-256").value(&Uint8Array::from(bytes));
+            let hashes = js_sys::Array::of1(hash.as_ref());
+            let mut options = web_sys::WebTransportOptions::new();
+            options.server_certificate_hashes(&hashes);
+            WebTransport::new_with_options(url, &options)
+        } else {
+            WebTransport::new(url)
+        }
+        .map_err(|e| anyhow!("Failed to connect to game server. {e:?}"))?;
 
         JsFuture::from(transport.ready())
             .await

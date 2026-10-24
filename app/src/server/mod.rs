@@ -142,6 +142,7 @@ pub async fn start(
 
         start_http_interface(
             Some(&build_path_fs),
+            host_cli.bind_address,
             http_interface_port,
             addr.port(),
             server_state_holder.clone(),
@@ -155,6 +156,7 @@ pub async fn start(
 
         start_http_interface(
             None,
+            host_cli.bind_address,
             http_interface_port,
             addr.port(),
             server_state_holder.clone(),
@@ -340,6 +342,7 @@ const INDEX_TEMPLATE: &str = r#"<html>
 
 fn start_http_interface(
     build_path: Option<&Path>,
+    bind_address: IpAddr,
     http_interface_port: u16,
     quic_interface_port: u16,
     server_state_holder: Arc<Mutex<Option<SharedServerState>>>,
@@ -411,7 +414,7 @@ fn start_http_interface(
     let build_path = build_path.map(ToOwned::to_owned);
 
     tokio::task::spawn(async move {
-        let addr = SocketAddr::from(([0, 0, 0, 0], http_interface_port));
+        let addr = SocketAddr::new(bind_address, http_interface_port);
 
         tracing::debug!(?build_path, "Starting HTTP interface on `{addr}`");
 

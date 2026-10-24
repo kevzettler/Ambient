@@ -5,6 +5,8 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
     plugins: [wasm()],
+    // The generated WebAssembly loader uses top-level await.
+    build: { target: "es2022" },
     server: {
         headers: {
             // Enables shared array buffers

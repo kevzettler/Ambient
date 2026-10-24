@@ -47,6 +47,7 @@ const MAX_ACCUMMULATED_FRAME_DELAY: u32 = 3;
 pub struct GameClientView {
     /// The url to connect to
     pub url: String,
+    pub server_certificate_hash: Option<Vec<u8>>,
     pub user_id: String,
     pub fail_on_version_mismatch: bool,
     pub systems_and_resources: Cb<dyn Fn() -> (SystemGroup, Entity) + Sync + Send>,
@@ -63,6 +64,7 @@ impl ElementComponent for GameClientView {
     fn render(self: Box<Self>, hooks: &mut Hooks) -> Element {
         let Self {
             url,
+            server_certificate_hash,
             user_id,
             fail_on_version_mismatch,
             systems_and_resources,
@@ -109,7 +111,12 @@ impl ElementComponent for GameClientView {
                     url = resolve_hosted_server(&assets, url).await?;
                 }
 
-                let conn = Connection::connect(&url.as_str()).await.with_context(|| {
+                let conn = Connection::connect_with_certificate_hash(
+                    url.as_str(),
+                    server_certificate_hash.as_deref(),
+                )
+                .await
+                .with_context(|| {
                     format!("Failed to establish a WebTransport session for \"{url}\"")
                 })?;
 

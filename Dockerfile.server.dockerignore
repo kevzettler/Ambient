@@ -1,0 +1,8 @@
+**/target
+**/node_modules
+**/.git
+**/tmp
+**/.DS_Store
+web/pkg
+web/www/dist
+example_assets

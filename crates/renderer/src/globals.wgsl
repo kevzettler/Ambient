@@ -123,10 +123,15 @@ fn project_point(transform: mat4x4<f32>, position: vec3<f32>) -> vec3<f32> {
     return p.xyz / p.w;
 }
 
+fn load_solids_screen_depth(uv: vec2<f32>) -> f32 {
+    // Depth textures cannot be paired with a filtering sampler in WebGPU.
+    let size = vec2<i32>(textureDimensions(solids_screen_depth));
+    let pixel = clamp(vec2<i32>(uv * vec2<f32>(size)), vec2<i32>(0), size - vec2<i32>(1));
+    return textureLoad(solids_screen_depth, pixel, 0);
+}
+
 fn get_solids_screen_depth(screen_ndc: vec3<f32>) -> f32 {
-    let screen_tc = screen_ndc_to_uv(screen_ndc);
-    // return textureSampleLevel(solids_screen_depth, default_sampler, screen_tc, 0.);
-    return textureSample(solids_screen_depth, default_sampler, screen_tc);
+    return load_solids_screen_depth(screen_ndc_to_uv(screen_ndc));
 }
 
 fn get_solids_screen_color(screen_ndc: vec3<f32>) -> vec3<f32> {

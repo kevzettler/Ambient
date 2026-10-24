@@ -118,9 +118,18 @@ import("ambient_web")
             params.set('context', context);
         }
 
-        const url = serverUrl && serverUrl || params.size != 0 && `https://api.ambient.run/servers/ensure-running?${params.toString()}` || "https://127.0.0.1:9000";
+        const url = serverUrl || (params.size != 0
+            ? `https://api.ambient.run/servers/ensure-running?${params.toString()}`
+            : import.meta.env.VITE_AMBIENT_SERVER_URL || "https://127.0.0.1:9000");
 
         console.log(`Connecting to ${url}`)
+
+        // Local development uses a short-lived certificate pinned by the launcher.
+        const certificateHex = import.meta.env.DEV && url === "https://127.0.0.1:9000"
+            ? import.meta.env.VITE_AMBIENT_CERT_SHA256 : undefined;
+        if (certificateHex && !/^[0-9a-f]{64}$/i.test(certificateHex)) {
+            throw new Error("VITE_AMBIENT_CERT_SHA256 must be a SHA-256 hex digest");
+        }
 
         let settings = {
             enableLogging: true,
@@ -129,6 +138,9 @@ import("ambient_web")
             allowVersionMismatch: true,
             debugger: debuggerOn,
             userId: userId,
+            serverCertificateHash: certificateHex
+                ? certificateHex.match(/../g)!.map((byte: string) => parseInt(byte, 16))
+                : undefined,
         };
 
         (async () => {

@@ -1,0 +1,24 @@
+# Build from the Ambient directory with --platform linux/amd64 for Wingrivals.
+# Game packages are built separately; the runtime serves prebuilt packages.
+FROM rust:1.88.0-bookworm AS builder
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    cmake clang ninja-build pkg-config libfontconfig1-dev libasound2-dev \
+    libxcb-xfixes0-dev && rm -rf /var/lib/apt/lists/*
+WORKDIR /build
+COPY . .
+ENV CARGO_BUILD_JOBS=3 CARGO_PROFILE_RELEASE_DEBUG=0 CARGO_INCREMENTAL=0
+ARG AMBIENT_BUILD_REVISION
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    --mount=type=cache,target=/build/target \
+    AMBIENT_BUILD_REVISION="$AMBIENT_BUILD_REVISION" cargo build --locked --release -p ambient \
+    && strip target/release/ambient && cp target/release/ambient /build/ambient-server
+
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates libasound2 libfontconfig1 libxcb-xfixes0 \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /build/ambient-server /usr/local/bin/ambient
+EXPOSE 9000/udp
+ENTRYPOINT ["/usr/local/bin/ambient"]

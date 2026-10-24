@@ -14,6 +14,7 @@ pub fn MainApp(_hooks: &mut Hooks, server_url: String, settings: Settings) -> El
 
     GameClientView {
         url: server_url,
+        server_certificate_hash: settings.server_certificate_hash,
         user_id: settings
             .user_id
             .unwrap_or_else(ambient_client_shared::util::random_username),
